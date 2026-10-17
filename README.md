@@ -1,70 +1,124 @@
-# Blockwise
+# BlockWise
 
-A mobile-first neighborhood issue reporter for Portland, Oregon, built for the Nebius x NVIDIA hackathon.
+An AI-powered civic infrastructure reporting platform that enables residents to identify, document, and track public infrastructure issues through image analysis and interactive mapping.
 
-## Milestone 1: a complete manual reporting interface
+Built with React, TypeScript, FastAPI, NVIDIA Nemotron, and Supabase to streamline community issue reporting using artificial intelligence and geospatial technology.
 
-- Follow a four-step wizard: **Photo → Location → Details → Review**.
-- Add one JPEG, PNG, or WebP photo (up to 10 MiB), preview it, replace it, or remove it.
-- Enter a street address or intersection and confirm the issue is in Portland. This is a user-provided location, not verified geocoding.
-- Choose pothole, damaged sidewalk, or streetlight problem and add optional observations. Streetlight guidance asks about the observed behavior rather than assuming an outage from a photo.
-- Review a deterministic draft made only from your inputs and edit the description.
-- Confirm your review, then copy or download the text. The original photo must be attached separately when reporting elsewhere.
+## Features
 
-This milestone runs without API keys, a Nebius account, a database, or paid services. It does **not** perform AI analysis, submit reports, or display official repair status. It is an independent project, not affiliated with the City of Portland.
+📸 **Photo-Based Issue Reporting**: Upload images of potholes, damaged sidewalks, broken streetlights, and other public infrastructure problems.
 
-## Run locally (Mac or Windows)
+🤖 **AI-Powered Image Analysis**: Uses an image-capable AI pipeline integrated with NVIDIA Nemotron to assist with identifying and classifying infrastructure issues.
 
-Use Node.js 24 LTS and npm. From the project folder:
+📝 **AI-Generated Report Descriptions**: Automatically generates editable descriptions based on uploaded images and user-provided details.
 
-```sh
+📍 **Interactive Map**: Displays reported infrastructure issues geographically using Leaflet and OpenStreetMap.
+
+🏙️ **Community Reporting**: Enables residents to submit infrastructure reports with images, descriptions, categories, and locations.
+
+📊 **Issue Tracking Dashboard**: Organizes submitted reports and allows users to review their reported issues and current statuses.
+
+🔐 **User Authentication**: Provides secure account registration and login for managing personal reports.
+
+☁️ **Cloud Data Storage**: Uses Supabase PostgreSQL and Storage to manage report information and uploaded images.
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone <YOUR-BLOCKWISE-REPOSITORY-URL>
+cd BlockWise
+```
+
+### 2. Install frontend dependencies
+
+```bash
+cd frontend
 npm install
+```
+
+### 3. Install backend dependencies
+
+Open a second terminal:
+
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 4. Configure environment variables
+
+Create the required environment files using the project's example configuration.
+
+Configure:
+
+- Supabase project URL
+- Supabase authentication and database settings
+- Supabase Storage configuration
+- NVIDIA AI inference provider credentials
+- Any additional application-specific settings
+
+Keep all secret credentials in environment variables and exclude them from Git.
+
+### 5. Start the backend
+
+```powershell
+python -m uvicorn main:app --reload
+```
+
+### 6. Start the frontend
+
+In a separate terminal:
+
+```bash
+cd frontend
 npm run dev
 ```
 
-Open http://localhost:3000 and keep the terminal running. Press Ctrl+C to stop.
+Open the local development URL displayed in the terminal.
 
-## Check the code
+## Architecture
 
-```sh
-npm test
-npm run typecheck
-npm run build
-```
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS
+- **Backend**: Python, FastAPI
+- **AI Integration**: NVIDIA Nemotron with an image-capable analysis pipeline
+- **Database**: Supabase PostgreSQL
+- **Authentication**: Supabase Auth
+- **Image Storage**: Supabase Storage
+- **Mapping**: Leaflet, OpenStreetMap
+- **Development Tools**: Git, GitHub, VS Code
 
-The tests cover required information, photo validation, and descriptions that preserve resident observations without inventing facts. Native TypeScript test execution requires Node 22.18+ (Node 24 recommended).
+## How It Works
 
-### Manual acceptance check
+1. **Create an Account** — Residents register or sign in to manage their infrastructure reports.
+2. **Upload an Image** — Users submit a photo of a damaged road, sidewalk, streetlight, or other infrastructure issue.
+3. **AI Image Analysis** — The image-analysis pipeline identifies the potential issue and suggests a category.
+4. **Generate a Description** — AI generates an editable report description based on the image and available context.
+5. **Select a Location** — Users identify the issue's geographic location using an interactive map.
+6. **Submit the Report** — Report details and images are securely stored in Supabase.
+7. **Track Reports** — Users view submitted reports and their statuses through the dashboard.
+8. **Explore the Map** — Reported issues are displayed geographically for community awareness.
 
-1. Continue without a photo: an actionable required-photo error appears.
-2. Add an unsupported, oversized, or damaged photo: see an actionable error.
-3. Add a valid photo and continue. Location and Portland confirmation are required before the details step.
-4. Choose each category and add optional observations, then continue to review.
-5. Edit the description. Copy/download requires an explicit review confirmation; editing invalidates it.
-6. Use Back or the completed step buttons to revisit entries. An unchanged detail round-trip preserves the edited description. Changing category/location/notes regenerates it with a notice on the details screen.
-7. Copy/download text: verify the edited description and “not submitted” status. Confirm the photo is not included.
-8. Start another report: cancel preserves the draft; confirming clears it and returns to Photo.
-9. Repeat at a narrow mobile width and use the keyboard to operate the wizard.
+## Getting Started
 
-## Privacy and limitations
+### Prerequisites
 
-Photos are decoded and previewed locally using temporary browser object URLs. No image or report content is uploaded, and there is no browser storage or analytics. The draft exists in memory in the current tab; reloading clears it. Text exports contain the location and observations you entered. Keep downloaded files only where you intend to save them.
+- Node.js and npm
+- Python 3
+- Git
+- Supabase project
+- NVIDIA AI inference access
+- Internet connection for cloud services and map data
 
-The app does not validate municipal jurisdiction, classify photos, detect emergencies, or route reports yet. It is a reporting draft tool for non-emergency neighborhood issues.
+## Project Purpose
 
-## How the code fits together
+BlockWise explores how artificial intelligence, computer vision, and geospatial technology can improve the way communities identify and report infrastructure problems.
 
-- `app/page.tsx`: homepage entry point.
-- `components/report-builder.tsx`: form, local photo handling, review, and text export.
-- `components/icon.tsx` and `components/neighborhood.tsx`: original vector artwork.
-- `app/globals.css`: responsive visual design.
-- `lib/report.ts`: shared data types, validation, and deterministic draft formatting.
-- `lib/report.test.ts`: focused tests of those rules.
+By combining automated image analysis with accessible reporting tools and interactive mapping, the platform aims to make infrastructure reporting more efficient, organized, and accessible.
 
-## Next milestones
+## Author
 
-1. Add an NVIDIA model through Nebius Token Factory or Nebius AI Cloud after access is available. Model availability, image input support, and licensing must be verified before selection. Keep credentials on the server.
-2. Add verified city reporting links keyed to the resident-reviewed category.
-3. Add failure handling and inference limits, then deploy and prepare the hackathon submission.
-
-A real NVIDIA/Nebius runtime integration is still required before this project meets the hackathon's model/platform requirement. Milestone 1 is the interface foundation.
+GitHub: [hieun5](https://github.com/hieun5)
